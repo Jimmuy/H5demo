@@ -6,8 +6,11 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 
+/**
+ * 网格布局Activity，用于显示功能菜单按钮，处理按钮点击事件并跳转到对应的H5页面
+ */
 public class GridActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
@@ -18,33 +21,43 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
         initButtons();
     }
 
+    /**
+     * 初始化所有功能按钮并设置点击事件监听器
+     */
     private void initButtons() {
+        // 定义所有功能按钮的ID数组
         int[] buttonIds = {
-            R.id.btn_todo,
-            R.id.btn_store_select,
-            R.id.btn_records,
-            R.id.btn_eval_draft,
-            R.id.btn_statistics,
-            R.id.btn_message,
-            R.id.btn_message2,
-            R.id.btn_video_settings,
-            R.id.btn_store_list,
-            R.id.btn_store_manage
+            R.id.btn_todo,            // 待办事项
+            R.id.btn_store_select,    // 门店选择
+            R.id.btn_records,         // 记录
+            R.id.btn_eval_draft,      // 评估草稿
+            R.id.btn_statistics,      // 统计
+            R.id.btn_message,         // 消息（巡检）
+            R.id.btn_message2,        // 消息
+            R.id.btn_video_settings,  // 视频设置
+            R.id.btn_store_list,      // 门店列表
+            R.id.btn_store_manage     // 门店管理
         };
 
         for (int id : buttonIds) {
-            MaterialButton button = findViewById(id);
-            button.setOnClickListener(this);
+            MaterialCardView cardView = findViewById(id);
+            cardView.setOnClickListener(this);
         }
     }
 
+    /**
+     * 处理按钮点击事件，根据不同的按钮ID构建对应的H5页面URL并跳转
+     * @param view 被点击的视图对象
+     */
     @Override
     public void onClick(View view) {
-        String url = "http://10.11.66.11:3000/lite-miniapp-h5/index.html#";
+        // 设置H5页面的基础URL（开发环境）
+        String url = "https://pb.hik-cloud.com/lite-miniapp-h5/index.html#";
+        // 生产环境URL
 //        String url = "https://pb.hik-cloud.com/lite-miniapp-h5/index.html#";
         int id = view.getId();
-        String token = ((com.google.android.material.textfield.TextInputEditText) findViewById(R.id.token_input)).getText().toString();
-
+        String token = "804ea7b7-b1bb-4b1e-9718-b9dd829c72b8";
+        // 根据按钮ID拼接不同的页面路径和参数
         if (id == R.id.btn_todo) {
             url += "/todo"+"?token=" + token;
         } else if (id == R.id.btn_store_select) {
@@ -66,14 +79,17 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.btn_store_manage) {
             url += "/store/storeManage"+"?token=" + token;
         }
-        url	+=  "&statusBarHeight=0&fromThirdApp=true&thirdType=3";//android传3ios传2
+        // 添加通用参数：状态栏高度、第三方应用标识和类型（Android为3，iOS为2）
+        url	+=  "&statusBarHeight=0&fromThirdApp=true&thirdType=3";
+        // 除了待办事项页面外，其他页面都添加firstPage参数
         if (id!=R.id.btn_todo){
             url+="&firstPage=1";
         }
         android.util.Log.d("GridActivity", "Opening URL: " + url);
         
+        // 创建Intent并携带URL参数跳转到WebView页面
         Intent intent = new Intent(this, WebViewActivity.class);
-        intent.putExtra("url", url);
+        intent.putExtra("url", "https://pb.hik-cloud.com/safe-center/index.html#/login/single?client_id=155e8cf61ed84578998fc6e7b2ba309e&response_type=code&state=STATE&redirect_uri=http%3A%2F%2F10.11.66.11%3A3000%2Flite-miniapp-h5%2Findex.html%23%2Flogin%3FstatusBarHeight%3D0%26fromThirdApp%3Dtrue%26thirdType%3D3");
         startActivity(intent);
     }
 }

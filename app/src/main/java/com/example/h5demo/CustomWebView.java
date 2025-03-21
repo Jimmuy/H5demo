@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.http.SslError;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.webkit.GeolocationPermissions;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -72,6 +73,7 @@ public class CustomWebView extends WebView {
         });
 
         setWebChromeClient(new WebChromeClient() {
+
             @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
                     FileChooserParams fileChooserParams) {

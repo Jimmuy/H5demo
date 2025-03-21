@@ -50,7 +50,7 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview);
 
         webView = findViewById(R.id.webview);
-        checkAndRequestPermissions();
+//        checkAndRequestPermissions();
         initJSBridge();
 
         // 从Intent中获取URL
@@ -84,13 +84,6 @@ public class WebViewActivity extends AppCompatActivity {
                 callback.onReceiveValue(results);
                 webView.setFilePathCallback(null); // 直接设置为null，避免重复调用
             }
-        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                jsBridge.handleImageResult(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -105,14 +98,12 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void checkAndRequestPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            boolean allBasicPermissionsGranted = true;
             for (String permission : getRequiredPermissions()) {
                 // 跳过后台定位权限的检查，稍后单独处理
                 if (permission.equals(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                     continue;
                 }
                 if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                    allBasicPermissionsGranted = false;
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                         // 用户之前拒绝过这个权限，显示解释
                         new AlertDialog.Builder(this)
@@ -154,11 +145,13 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //回调给JS去查找是不是自己的requestCode对应再处理权限请求结果
+        jsBridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 权限被授予，继续检查其他权限
-                    checkAndRequestPermissions();
+//                    checkAndRequestPermissions();
                 } else {
                     // 权限被拒绝
                     if (!shouldShowRequestPermissionRationale(permissions[0])) {
@@ -169,12 +162,6 @@ public class WebViewActivity extends AppCompatActivity {
                         Toast.makeText(this, "需要" + getPermissionName(permissions[0]) + "权限来保证应用正常运行", Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-        } else if (requestCode == JSBridge.PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                jsBridge.chooseImage();
-            } else {
-                Toast.makeText(this, "需要存储权限来选择图片", Toast.LENGTH_SHORT).show();
             }
         }
     }
