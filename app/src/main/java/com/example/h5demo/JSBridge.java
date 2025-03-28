@@ -40,17 +40,26 @@ public class JSBridge {
 
     @JavascriptInterface
     public void dispatchMessage(String message) {
-        Log.e("xxxxxxxxDispatchMessage", message);
-        String callbackId = "";
+//        Log.e("xxxxxxxxDispatchMessage", message);
+        String callbackId;
         try {
             JSONObject jsonObject = new JSONObject(message);
             String apiName = jsonObject.getString("apiName");
             Object params = jsonObject.opt("params");
             callbackId = jsonObject.optString("callbackId");
-            if ("closeWindow".equals(apiName)) {
-                activity.finish();
-            } else if ("requestPermission".equals(apiName)) {
-                requestPermission(params, callbackId);
+            switch (apiName) {
+                case "closeWindow":
+                    activity.finish();
+                    break;
+                case "requestPermission":
+                    requestPermission(params, callbackId);
+                    break;
+                case "exitApp":
+                    activity.finish();
+                    break;
+                default:
+                    Log.e("DispatchMsg not impl", message);
+                    break;
             }
         } catch (Exception e) {
             Log.e("dispatchMsg---Exception", e.toString());
@@ -113,7 +122,7 @@ public class JSBridge {
                             result = true;
                         }
                     }
-                    Log.e("xxxxxxxxxxreplyJs", entry.getKey());
+//                    Log.e("xxxxxxxxxxreplyJs", entry.getKey());
                     replyJs(entry.getKey(), 200, result);
                 }
             }
