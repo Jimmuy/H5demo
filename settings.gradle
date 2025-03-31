@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':thirdAppH5'
 rootProject.name = "H5Demo"

@@ -1,4 +1,4 @@
-package com.example.h5demo;
+package com.example.thirdapph5;
 
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -40,7 +40,6 @@ public class JSBridge {
 
     @JavascriptInterface
     public void dispatchMessage(String message) {
-//        Log.e("xxxxxxxxDispatchMessage", message);
         String callbackId;
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -98,46 +97,22 @@ public class JSBridge {
             activity.runOnUiThread(() -> {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append("handleYMAppBridgeCallback(");
-                buffer.append("\'").append(callbackId).append("\'");
+                buffer.append("'").append(callbackId).append("'");
                 buffer.append(",");
-                buffer.append("\'").append(replyString.replace("\"", "\\\"")).append("\'");
-                buffer.append(");");
-                activity.getWebView().evaluateJavascript(buffer.toString(), s -> Log.d("onReceiveValue", s));
+                buffer.append(replyString);
+                buffer.append(")");
+                activity.getWebView().evaluateJavascript(buffer.toString(), null);
             });
         } catch (JSONException e) {
             Log.e("replyJs---Exception", e.toString());
         }
-
-
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        //回调JS的权限请求结果，异步
-        if (PermissionMap.containsValue(requestCode)) {
-            for (Map.Entry<String, Integer> entry : PermissionMap.entrySet()) {
-                if (entry.getValue().equals(requestCode)) {
-                    boolean result = false;
-                    if (grantResults.length > 0) {
-                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                            result = true;
-                        }
-                    }
-//                    Log.e("xxxxxxxxxxreplyJs", entry.getKey());
-                    replyJs(entry.getKey(), 200, result);
-                }
-            }
-        }
-
     }
 
     private boolean checkPermission(String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission
-        ) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission(String permission, int code) {
-        ActivityCompat.requestPermissions(activity,
-                new String[]{permission},
-                code);
+    private void requestPermission(String permission, int requestCode) {
+        ActivityCompat.requestPermissions(activity, new String[]{permission}, requestCode);
     }
 }

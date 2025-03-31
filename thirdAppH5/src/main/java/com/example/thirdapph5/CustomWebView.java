@@ -1,6 +1,4 @@
-package com.example.h5demo;
-
-import static com.example.h5demo.WebViewActivity.FILE_CHOOSER_RESULT_CODE;
+package com.example.thirdapph5;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,6 +20,7 @@ public class CustomWebView extends WebView {
     private static final String DEFAULT_URL = "https://www.baidu.com";
     private String currentUrl = DEFAULT_URL;
     private ValueCallback<Uri[]> filePathCallback;
+    public static final int FILE_CHOOSER_RESULT_CODE = 1;
 
     public CustomWebView(Context context) {
         this(context, null);
@@ -104,22 +103,11 @@ public class CustomWebView extends WebView {
         }
     }
 
-    public String getCurrentUrl() {
-        return currentUrl;
-    }
-
     public ValueCallback<Uri[]> getFilePathCallback() {
         return filePathCallback;
     }
 
     public void setFilePathCallback(ValueCallback<Uri[]> callback) {
         this.filePathCallback = callback;
-    }
-
-    public void resetFilePathCallback() {
-        if (filePathCallback != null) {
-            filePathCallback.onReceiveValue(null);
-            filePathCallback = null;
-        }
     }
 }
