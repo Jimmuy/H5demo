@@ -22,7 +22,9 @@
         <activity
             android:name=".WebViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/WebViewTheme" />
     </application>
 
 </manifest>
